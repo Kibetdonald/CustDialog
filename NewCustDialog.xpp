@@ -1,0 +1,73 @@
+class NewCustDialog extends RunBase
+{
+   // Declare a DialogField variable for the account field
+   DialogField fieldAccount; 
+   // Declare a dialog field variable for the name of the name field
+   DialogFIeld fieldName; 
+   //Declare a variable to store the customer table record
+   CustTable   custTable; 
+    //Declare a variable to store the customer account number
+   CustAccount custAccount; 
+   // Declare a variable to store the customer name
+   CustName custName; 
+
+   public container pack()
+   {
+        // Return a null container
+       return conNull(); 
+   }
+
+   public boolean unpack(container _packedClass)
+   {
+        // Always return true
+       return true;
+   }
+
+   Object Dialog()
+   {
+       Dialog dialog;
+       // Call the base class dialog method
+       dialog = super(); 
+       // Set a title for the dialog
+       dialog.caption('Simple Dialog');
+       // Add a new field to the dialog for entering the customer account
+       fieldAccount = dialog.addField(extendedTypeStr(CustVendAC), 'Customer account');
+       // Return the dialog object
+       return dialog;
+   }
+
+   public boolean getFromDialog()
+   {
+       // Retrieve the value entered in the account field of the dialog
+       custAccount = fieldAccount.value();   
+       // Call the base class's getFromDialog method
+       return super();
+   }
+
+   public void run()
+   {   
+       // Set the dialog field value to find the corresponding customer record in CustTable
+       custTable = CustTable::find(custAccount);
+
+       if (custTable)
+       {
+           // Show the retrieved information (account number and name)
+           info(strFmt('%1 -- %2', custTable.AccountNum, custTable.name()));
+       }
+       else
+       {
+            // Else return error 
+           error('Customer Account not found!');
+       }    
+   }
+
+   public static void main(Args _args)
+   {
+       NewCustDialog custDialog = new NewCustDialog();       
+
+       if (custDialog.prompt())
+       {
+           custDialog.run();
+       }
+   }
+}
